@@ -1,0 +1,317 @@
+<!--
+  The Virtual World — Professional Multi-Color Animated Website
+  Features added:
+  - Neon multi-color animated gradient
+  - Floating WhatsApp widget
+  - Dynamic Blog section (JS array / optional external JSON)
+  - Advertisement Gallery (auto-slide + arrows + lightbox)
+  - Sample posts & sample ads included (edit the JS arrays below)
+  - Reviews, Services, Contact remain
+  Deployment: push this file to a GitHub repo and enable Pages (main branch / root)
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>The Virtual World — Your Online Cybercafe</title>
+  <meta name="description" content="Fast, reliable online services — Birth/Death Certificates, Passport, PAN, Ayushman Card, HPR, Job Applications. WhatsApp: 9858703786" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1:#071021; --bg2:#0b1228; --glass: rgba(255,255,255,0.04);
+      --neon1:#00e0ff; --neon2:#7b61ff; --neon3:#ff6ec4; --neon4:#ffd166;
+      --muted:#b7c4d6; --text:#eaf6ff; --radius:14px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto; background:linear-gradient(120deg,var(--bg1),var(--bg2)); color:var(--text);}
+
+    /* animated gradient background layer */
+    .bg-animated{position:fixed;inset:0;z-index:-1;filter:blur(60px);opacity:0.9;background:linear-gradient(45deg,var(--neon1),var(--neon2),var(--neon3),var(--neon4));background-size:400% 400%;animation:moveBg 18s ease infinite}
+    @keyframes moveBg{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+    header{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);backdrop-filter:blur(6px);position:sticky;top:0;border-bottom:1px solid rgba(255,255,255,0.04)}
+    .brand{display:flex;align-items:center;gap:14px}
+    .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--neon1),var(--neon2));display:flex;align-items:center;justify-content:center;font-weight:800;color:#071021;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
+    .title{line-height:1}
+    .title h1{font-size:18px;margin:0}
+    .title p{margin:0;color:var(--muted);font-size:13px}
+    nav{display:flex;gap:12px;align-items:center}
+    nav a{color:var(--text);text-decoration:none;font-weight:600;padding:8px 12px;border-radius:10px}
+    nav a:hover{background:rgba(255,255,255,0.03)}
+
+    main{max-width:1200px;margin:28px auto;padding:0 18px}
+
+    /* Hero */
+    .hero{display:grid;grid-template-columns:1fr 360px;gap:28px;align-items:center}
+    .hero-card{padding:26px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));box-shadow:0 12px 40px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.03)}
+    .hero h2{margin:0 0 10px 0;font-size:28px}
+    .lead{color:var(--muted);margin-bottom:16px}
+    .chips{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{background:rgba(255,255,255,0.03);padding:8px 12px;border-radius:999px;font-weight:700;color:var(--muted)}
+
+    .cta{padding:18px;border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border:1px solid rgba(255,255,255,0.03)}
+    .contact-cta{display:flex;flex-direction:column;gap:12px}
+    .btn{display:inline-block;padding:12px 16px;border-radius:12px;font-weight:800;border:none;cursor:pointer}
+    .btn-wa{background:linear-gradient(90deg,var(--neon1),var(--neon3));color:#071021}
+
+    /* services grid */
+    .services{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px}
+    .service{background:rgba(255,255,255,0.03);padding:14px;border-radius:12px}
+    .service h4{margin:0 0 6px 0;color:var(--neon2)}
+    .service p{margin:0;color:var(--muted);font-size:13px}
+
+    /* Ads gallery */
+    .gallery-wrap{margin-top:34px}
+    .gallery{position:relative;overflow:hidden;border-radius:14px;border:1px solid rgba(255,255,255,0.04);background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent)}
+    .slides{display:flex;transition:transform 0.6s cubic-bezier(.2,.9,.3,1)}
+    .slide{min-width:100%;display:flex;align-items:center;justify-content:center;padding:28px}
+    .slide img{max-height:300px;max-width:100%;border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,0.5)}
+    .gallery-controls{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;padding:16px}
+    .arrow{background:rgba(0,0,0,0.45);backdrop-filter:blur(6px);border:none;color:var(--text);padding:10px;border-radius:10px;cursor:pointer}
+    .dots{display:flex;gap:8px;justify-content:center;margin-top:8px}
+    .dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.2);cursor:pointer}
+    .dot.active{background:linear-gradient(90deg,var(--neon1),var(--neon3))}
+
+    /* Lightbox */
+    .lightbox{position:fixed;inset:0;background:rgba(2,6,23,0.85);display:none;align-items:center;justify-content:center;z-index:2000}
+    .lightbox img{max-width:90%;max-height:80%;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,0.7)}
+    .lightbox.show{display:flex}
+
+    /* Blog */
+    .blog-section{margin-top:40px}
+    .blog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .post{background:rgba(255,255,255,0.04);border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.03);box-shadow:0 10px 30px rgba(0,0,0,0.45)}
+    .post img{width:100%;height:160px;object-fit:cover;display:block}
+    .post-body{padding:12px}
+    .post h3{margin:0 0 8px 0}
+    .post p{margin:0;color:var(--muted);font-size:14px}
+    .load-more{display:block;margin:18px auto;padding:10px 14px;border-radius:10px;background:linear-gradient(90deg,var(--neon3),var(--neon4));border:none;color:#071021;font-weight:700;cursor:pointer}
+
+    /* Reviews */
+    .reviews{margin-top:34px;padding:18px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border:1px solid rgba(255,255,255,0.03)}
+    .review{padding:12px;border-radius:10px;background:rgba(255,255,255,0.02);margin:8px 0}
+
+    /* Floating WhatsApp */
+    .wa-float{position:fixed;right:18px;bottom:18px;z-index:1000}
+    .wa-btn{width:64px;height:64px;border-radius:999px;background:linear-gradient(90deg,var(--neon1),var(--neon3));display:flex;align-items:center;justify-content:center;color:#071021;font-weight:800;box-shadow:0 12px 40px rgba(0,0,0,0.5);cursor:pointer;animation:pulse 2.6s infinite}
+    @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
+
+    footer{margin-top:40px;padding:20px;text-align:center;color:var(--muted)}
+
+    /* Responsive */
+    @media (max-width:1000px){.hero{grid-template-columns:1fr}.services{grid-template-columns:repeat(2,1fr)}.blog-grid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:640px){.services{grid-template-columns:1fr}.blog-grid{grid-template-columns:1fr}.slide img{max-height:220px}}
+  </style>
+</head>
+<body>
+  <div class="bg-animated" aria-hidden></div>
+
+  <header>
+    <div class="brand">
+      <div class="logo">VW</div>
+      <div class="title"><h1>The Virtual World</h1><p>Your Online Cybercafe • No queues • No delays</p></div>
+    </div>
+    <nav>
+      <a href="#services">Services</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#blog">Blog</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="top">
+      <div class="hero-card">
+        <h2>Fast • Reliable • Affordable — Anytime • Anywhere</h2>
+        <p class="lead">We help you apply for Birth/Death Certificates, Passport & PAN, Ayushman Card, HPR, Job Applications and more — fully online with WhatsApp support.</p>
+        <div class="chips">
+          <div class="chip">✅ No queues</div>
+          <div class="chip">📱 WhatsApp support</div>
+          <div class="chip">🔒 Secure</div>
+          <div class="chip">⚡ Fast processing</div>
+        </div>
+
+        <div class="services" style="margin-top:18px">
+          <div class="service"><h4>Birth Certificate</h4><p>Certified copies & digital assistance.</p></div>
+          <div class="service"><h4>Death Certificate</h4><p>Legal forms & submission help.</p></div>
+          <div class="service"><h4>Passport & PAN</h4><p>Form filling, document checks & follow up.</p></div>
+          <div class="service"><h4>Ayushman Card</h4><p>Application help & verification.</p></div>
+          <div class="service"><h4>HPR & Job Forms</h4><p>Quick government submissions.</p></div>
+          <div class="service"><h4>Other Services</h4><p>Driving License, JKPCB & more.</p></div>
+        </div>
+      </div>
+
+      <aside class="cta">
+        <div class="contact-cta">
+          <div style="font-weight:800;color:var(--neon2)">WhatsApp Only</div>
+          <div style="color:var(--muted)">Send us a message on WhatsApp to begin. We'll reply with a secure request form and instructions.</div>
+          <a class="btn btn-wa" href="https://wa.me/919858703786?text=Hello%20The%20Virtual%20World%2C%20I%20need%20help" target="_blank">Chat on WhatsApp</a>
+          <div style="font-size:13px;color:var(--muted)">Payments: UPI / Bank Transfer / Wallet</div>
+        </div>
+      </aside>
+    </section>
+
+    <!-- Advertisement Gallery -->
+    <section class="gallery-wrap" id="gallery">
+      <h3 style="color:#fff;margin-bottom:12px">Latest Offers & Advertisements</h3>
+      <div class="gallery" aria-roledescription="carousel">
+        <div class="slides" id="slides">
+          <!-- slides inserted by JS -->
+        </div>
+        <div class="gallery-controls">
+          <button class="arrow" id="prev">◀</button>
+          <button class="arrow" id="next">▶</button>
+        </div>
+      </div>
+      <div class="dots" id="dots" style="margin-top:12px"></div>
+    </section>
+
+    <!-- Blog -->
+    <section class="blog-section" id="blog">
+      <h3 style="color:#fff;margin-bottom:12px">News & Updates</h3>
+      <div class="blog-grid" id="blog-grid">
+        <!-- posts inserted by JS -->
+      </div>
+      <button class="load-more" id="load-more">Load more posts</button>
+    </section>
+
+    <!-- Reviews -->
+    <section class="reviews" id="reviews">
+      <h3 style="color:#fff;margin-bottom:12px">What Our Clients Say</h3>
+      <div id="reviews-list">
+        <!-- reviews by JS -->
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="cta" id="contact" style="margin-top:28px">
+      <h3 style="margin:0;color:var(--neon3)">Get Started</h3>
+      <p style="color:var(--muted)">Message on WhatsApp <strong>9858703786</strong> or open our request form to submit details.</p>
+      <a class="btn" href="https://forms.gle/3vy6StG9jcS7FUET8" target="_blank" style="background:linear-gradient(90deg,var(--neon1),var(--neon2));color:#071021">Open Request Form</a>
+    </section>
+
+  </main>
+
+  <footer>
+    © <span id="year"></span> The Virtual World — Fast • Reliable • Affordable
+  </footer>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-hidden="true">
+    <img src="" alt="Advertisement" id="lightbox-img">
+  </div>
+
+  <!-- Floating WhatsApp -->
+  <div class="wa-float"><a href="https://wa.me/918958703786?text=Hello%20I%20need%20help" target="_blank" class="wa-btn" aria-label="Chat on WhatsApp">WA</a></div>
+
+  <script>
+    // -----------------
+    // Editable content arrays
+    // You can replace this with a fetch('/content/blog.json') after you host JSON on GitHub.
+    // -----------------
+
+    const ADS = [
+      {id:1,title:'Passport Fast-Track Offer',img:'https://images.unsplash.com/photo-1545239351-1141bd82e8a6?q=80&w=1400&auto=format&fit=crop&ixlib=rb-4.0.3&s=1'},
+      {id:2,title:'PAN Card Assistance - 50% Off',img:'https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=1400&auto=format&fit=crop&ixlib=rb-4.0.3&s=2'},
+      {id:3,title:'Ayushman Card Enrollment Camp',img:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1400&auto=format&fit=crop&ixlib=rb-4.0.3&s=3'}
+    ];
+
+    const POSTS = [
+      {id:1,title:'New: Passport Help Desk Launched',img:'https://images.unsplash.com/photo-1520975911042-0b3b4b7ee5de?q=80&w=1400&auto=format&fit=crop&ixlib=rb-4.0.3&s=4',excerpt:'We launched a dedicated passport help desk for quicker renewals and form verification.'},
+      {id:2,title:'How to Get Your Birth Certificate Online',img:'https://images.unsplash.com/photo-1556761175-129418cb2dfe?q=80&w=1400&auto=format&fit=crop&ixlib=rb-4.0.3&s=5',excerpt:'Step-by-step guide to obtain or download certified birth records via our service.'},
+      {id:3,title:'Ayushman Card — Eligibility Checklist',img:'https://images.unsplash.com/photo-1584467735815-29191d7f3b78?q=80&w=1400&auto=format&fit=crop&ixlib=rb-4.0.3&s=6',excerpt:'A short checklist to help you prepare documents for Ayushman card registration.'},
+      {id:4,title:'PAN Card Updates: What Changed',img:'https://images.unsplash.com/photo-1520975921350-38c8b2a4d2d0?q=80&w=1400&auto=format&fit=crop&ixlib=rb-4.0.3&s=7',excerpt:'Important updates about PAN processing and faster digital uploads.'}
+    ];
+
+    const REVIEWS = [
+      {name:'Anita Sharma',rating:5,text:'Quick & professional — submitted my PAN with no hassle.'},
+      {name:'Rahul Verma',rating:5,text:'Passport renewal was smooth and fast.'},
+      {name:'Sakshi Gupta',rating:4,text:'Great support for Ayushman card application.'}
+    ];
+
+    // -----------------
+    // Advertisement gallery logic
+    // -----------------
+    const slidesEl = document.getElementById('slides');
+    const dotsEl = document.getElementById('dots');
+    let current = 0;
+    function renderSlides(){
+      slidesEl.innerHTML = '';
+      dotsEl.innerHTML = '';
+      ADS.forEach((ad,i)=>{
+        const s = document.createElement('div'); s.className='slide';
+        s.innerHTML = `<img src="${ad.img}" alt="${ad.title}" data-index="${i}" style="cursor:pointer">`;
+        slidesEl.appendChild(s);
+
+        const dot = document.createElement('div'); dot.className='dot'; dot.dataset.index=i; dot.addEventListener('click',()=>goTo(i));
+        if(i===0) dot.classList.add('active');
+        dotsEl.appendChild(dot);
+      });
+      updateSlidePosition();
+      // click to open lightbox
+      slidesEl.querySelectorAll('img').forEach(img=>img.addEventListener('click',e=>{openLightbox(e.target.src)}));
+    }
+    function updateSlidePosition(){ slidesEl.style.transform = `translateX(-${current*100}%)`; Array.from(dotsEl.children).forEach((d,idx)=>d.classList.toggle('active', idx===current)); }
+    function next(){ current = (current+1)%ADS.length; updateSlidePosition(); }
+    function prev(){ current = (current-1+ADS.length)%ADS.length; updateSlidePosition(); }
+    function goTo(i){ current=i; updateSlidePosition(); }
+    document.getElementById('next').addEventListener('click', ()=>{ next(); resetAuto(); });
+    document.getElementById('prev').addEventListener('click', ()=>{ prev(); resetAuto(); });
+
+    let auto = setInterval(next, 4500);
+    function resetAuto(){ clearInterval(auto); auto = setInterval(next,4500); }
+
+    // Lightbox
+    const lightbox = document.getElementById('lightbox'); const lbimg = document.getElementById('lightbox-img');
+    function openLightbox(src){ lbimg.src = src; lightbox.classList.add('show'); lightbox.setAttribute('aria-hidden','false'); }
+    function closeLightbox(){ lightbox.classList.remove('show'); lightbox.setAttribute('aria-hidden','true'); lbimg.src=''; }
+    lightbox.addEventListener('click', (e)=>{ if(e.target===lightbox||e.target===lbimg) closeLightbox(); });
+
+    // -----------------
+    // Blog rendering + load more
+    // -----------------
+    const blogGrid = document.getElementById('blog-grid');
+    let postsPerPage = 3; let page = 1;
+    function renderPosts(){
+      blogGrid.innerHTML='';
+      const start = 0; const end = page*postsPerPage; const list = POSTS.slice(0,end);
+      list.forEach(p=>{
+        const el = document.createElement('article'); el.className='post';
+        el.innerHTML = `<img src="${p.img}" alt="${p.title}"><div class="post-body"><h3>${p.title}</h3><p>${p.excerpt}</p></div>`;
+        blogGrid.appendChild(el);
+      });
+      document.getElementById('load-more').style.display = (end < POSTS.length) ? 'inline-block' : 'none';
+    }
+    document.getElementById('load-more').addEventListener('click', ()=>{ page++; renderPosts(); window.scrollTo({top: document.getElementById('blog').offsetTop - 80, behavior:'smooth'}); });
+
+    // -----------------
+    // Reviews
+    // -----------------
+    const reviewsList = document.getElementById('reviews-list');
+    function renderReviews(){ REVIEWS.forEach(r=>{ const d = document.createElement('div'); d.className='review'; d.innerHTML = `<strong>${r.name}</strong> — ${'⭐'.repeat(r.rating)}<div style="color:var(--muted);margin-top:6px">${r.text}</div>`; reviewsList.appendChild(d); }); }
+
+    // -----------------
+    // Init all
+    // -----------------
+    function init(){ renderSlides(); renderPosts(); renderReviews(); }
+    init();
+
+    // accessibility: keyboard for lightbox
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeLightbox(); if(e.key==='ArrowRight') next(); if(e.key==='ArrowLeft') prev(); });
+
+    // Allow replacing content with external JSON after deployment:
+    // Example (uncomment and host blog.json & ads.json on your repo):
+    // fetch('/ads.json').then(r=>r.json()).then(data=>{ ADS.splice(0,ADS.length,...data); renderSlides(); });
+    // fetch('/posts.json').then(r=>r.json()).then(data=>{ POSTS.splice(0,POSTS.length,...data); renderPosts(); });
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
+
+
+add this code and improve the Quality
+
